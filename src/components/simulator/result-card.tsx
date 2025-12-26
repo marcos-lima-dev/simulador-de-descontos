@@ -11,7 +11,7 @@ export function ResultCard({ result }: ResultCardProps) {
   if (!result) return null;
 
   return (
-    <Card className="w-full bg-slate-50 border-slate-200 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <Card className="w-full bg-slate-50 border-slate-200 slide-in-from-bottom-4 duration-500">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-lg font-bold text-slate-700">
           Resumo do Pedido

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Calculator, RotateCcw } from "lucide-react";
+// 1. Importamos o framer-motion
+import { motion, AnimatePresence } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,7 +31,6 @@ export default function Home() {
     setResult(calculation);
   };
 
-  // Função para limpar tudo
   const handleReset = () => {
     setPrice("");              
     setCustomerType("common"); 
@@ -62,20 +63,20 @@ export default function Home() {
             </div>
 
             {error && (
-              <div className="text-red-500 text-sm bg-red-50 p-3 rounded-md border border-red-200 text-center">
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-red-500 text-sm bg-red-50 p-3 rounded-md border border-red-200 text-center"
+              >
                 {error}
-              </div>
+              </motion.div>
             )}
 
-            {/* CORREÇÃO AQUI:
-              1. 'w-full' na div pai para garantir que o conjunto ocupe a largura toda.
-              2. 'flex-1' no botão de calcular para ele preencher o espaço restante sem estourar.
-            */}
             <div className="flex gap-3 w-full">
               <Button 
                 variant="outline"
                 size="icon"
-                className="shrink-0 text-slate-500 hover:text-red-500 hover:bg-red-50 border-slate-300"
+                className="shrink-0 text-slate-500 hover:text-red-500 hover:bg-red-50 border-slate-300 transition-colors duration-300" // Adicionei transition aqui também
                 onClick={handleReset}
                 title="Limpar campos e começar de novo"
               >
@@ -85,7 +86,7 @@ export default function Home() {
 
               <Button 
                 size="lg" 
-                className="flex-1 font-bold text-md" 
+                className="flex-1 font-bold text-md transition-transform active:scale-95" // Efeito de clique sutil
                 onClick={handleCalculate}
               >
                 <Calculator className="mr-2 h-5 w-5" />
@@ -96,7 +97,22 @@ export default function Home() {
           </CardContent>
         </Card>
 
-        <ResultCard result={result} />
+        {/* AQUI ACONTECE A MÁGICA DA TRANSIÇÃO
+            AnimatePresence: Permite animar a saída (unmount)
+        */}
+        <AnimatePresence mode="wait">
+          {result && (
+            <motion.div
+              key="result-card" // Identificador único para animação
+              initial={{ opacity: 0, y: 20, scale: 0.95 }} // Começa invisível, levemente abaixo e menor
+              animate={{ opacity: 1, y: 0, scale: 1 }}     // Fica visível, posição original e tamanho normal
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}   // Sai subindo e desaparecendo
+              transition={{ duration: 0.4, ease: "easeOut" }} // Duração da animação
+            >
+              <ResultCard result={result} />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
       </div>
     </main>
